@@ -2,10 +2,8 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>✨ Космический Аутентификатор ✨</title>
-    <!-- OTP Library для генерации TOTP -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/otplib/12.0.1/otplib-browser.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 ChatGPT TOTP • SHA-256</title>
     <style>
         * {
             margin: 0;
@@ -13,102 +11,62 @@
             box-sizing: border-box;
             font-family: 'Segoe UI', 'Arial', sans-serif;
         }
-
         body {
             min-height: 100vh;
-            background: radial-gradient(circle at 20% 30%, #0b0f2a, #02010a);
+            background: radial-gradient(circle at 20% 30%, #0a0f1e, #020108);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 20px;
-            position: relative;
-            overflow-x: hidden;
         }
-
-        body::before {
-            content: '';
-            position: fixed;
-            width: 200%;
-            height: 200%;
-            top: -50%;
-            left: -50%;
-            background: transparent url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'100%25\' height=\'100%25\'%3E%3Cdefs%3E%3CradialGradient id=\'g\' cx=\'30%25\' cy=\'40%25\' r=\'50%25\'%3E%3Cstop offset=\'0%25\' stop-color=\'%23ffffff\' stop-opacity=\'0.15\'/%3E%3Cstop offset=\'100%25\' stop-color=\'%23ffffff\' stop-opacity=\'0\'/%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'url(%23g)\'/%3E%3C/svg%3E');
-            background-size: cover;
-            opacity: 0.7;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .star {
-            position: fixed;
-            background: white;
-            border-radius: 50%;
-            box-shadow: 0 0 12px #7aaae0, 0 0 25px #3c6eb4;
-            z-index: 0;
-        }
-
         .card {
-            position: relative;
-            z-index: 10;
             max-width: 500px;
             width: 100%;
-            background: rgba(10, 15, 30, 0.55);
-            backdrop-filter: blur(12px) saturate(180%);
-            -webkit-backdrop-filter: blur(12px) saturate(180%);
-            border: 1px solid rgba(110, 170, 250, 0.3);
+            background: rgba(10, 15, 30, 0.65);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid #2a5a9c;
             border-radius: 48px;
             padding: 36px 28px;
-            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(70, 130, 255, 0.2) inset, 0 0 30px #3f6bc0;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.8), 0 0 30px #3f6bc0;
             color: #e3f0ff;
-            transition: box-shadow 0.3s ease;
         }
-
-        .card:hover {
-            box-shadow: 0 35px 55px rgba(0, 0, 0, 0.8), 0 0 0 2px #4f8cff inset, 0 0 40px #5f8ef0;
-        }
-
         h1 {
             font-weight: 400;
-            font-size: 2.4rem;
-            letter-spacing: 6px;
+            font-size: 2.2rem;
+            letter-spacing: 4px;
             text-align: center;
             margin-bottom: 8px;
             text-transform: uppercase;
-            background: linear-gradient(135deg, #bfd9ff, #a0c4ff, #d4e4ff);
+            background: linear-gradient(135deg, #a0c0ff, #d0e0ff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             text-shadow: 0 0 15px #3b77e6;
         }
-
         .subhead {
             text-align: center;
             font-size: 1rem;
-            opacity: 0.8;
-            margin-bottom: 30px;
+            opacity: 0.9;
+            margin-bottom: 20px;
             border-bottom: 1px dashed #3d6192;
             padding-bottom: 15px;
-            word-break: break-word;
         }
-
         .code-container {
-            background: rgba(0, 5, 20, 0.5);
-            border-radius: 80px;
+            background: rgba(0,5,20,0.5);
+            border-radius: 60px;
             padding: 25px 20px;
-            margin-bottom: 20px;
             border: 1px solid #2e5688;
-            box-shadow: 0 0 30px #1f3a66 inset;
+            box-shadow: inset 0 0 30px #1f3a66;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-
         .timer-ring {
             display: flex;
             justify-content: center;
             margin-bottom: 10px;
         }
-
         .timer-circle {
             width: 100px;
             height: 100px;
@@ -117,13 +75,11 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 0 20px #2b5797, inset 0 0 10px #00000088;
+            box-shadow: 0 0 20px #2b5797, inset 0 0 10px #000;
             border: 2px solid #a1c2ff;
-            transition: background 0.1s linear;
         }
-
         .timer-text {
-            font-size: 1.7rem;
+            font-size: 1.8rem;
             font-weight: 600;
             color: #ebf5ff;
             text-shadow: 0 0 15px #8ab2ff;
@@ -136,43 +92,25 @@
             justify-content: center;
             backdrop-filter: blur(4px);
         }
-
         .totp-display {
-            font-size: 5.2rem;
+            font-size: 5.5rem;
             font-weight: 800;
             letter-spacing: 16px;
-            text-align: center;
             margin: 15px 0 5px;
             color: #d4edff;
-            text-shadow: 0 0 25px #3d9dff, 0 0 5px #aad0ff;
+            text-shadow: 0 0 25px #3d9dff;
             font-variant-numeric: tabular-nums;
-            word-break: break-all;
             background: #02102430;
             padding: 5px 25px;
             border-radius: 60px;
-            display: inline-block;
-            backdrop-filter: blur(5px);
             border: 1px solid #3680dd;
         }
-
-        .error-message {
-            color: #ffb0a0;
-            background: #4a1e1e80;
-            padding: 8px 16px;
-            border-radius: 30px;
-            margin-top: 8px;
-            font-size: 0.9rem;
-            border-left: 4px solid #ff6b6b;
-            backdrop-filter: blur(5px);
-            text-align: center;
-        }
-
         .copy-btn {
-            background: rgba(20, 60, 120, 0.7);
+            background: rgba(20,60,120,0.8);
             border: 1px solid #5f9eff;
-            color: #e1efff;
+            color: #fff;
             padding: 14px 28px;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             border-radius: 60px;
             backdrop-filter: blur(10px);
             cursor: pointer;
@@ -181,377 +119,374 @@
             letter-spacing: 2px;
             box-shadow: 0 5px 15px #00000050, 0 0 15px #1e4d9c;
             transition: 0.2s;
-            width: fit-content;
             min-width: 200px;
         }
-
         .copy-btn:hover {
             background: #2a6fc9;
-            box-shadow: 0 0 25px #3e8aff, 0 5px 15px #000;
-            border-color: #b6d0ff;
-            transform: scale(1.02);
+            box-shadow: 0 0 25px #3e8aff;
         }
-
-        .copy-btn:active {
-            transform: scale(0.98);
-        }
-
-        .secret-section {
-            margin-top: 30px;
+        .settings {
+            margin-top: 25px;
             border-top: 1px solid #2e5688;
-            padding-top: 25px;
+            padding-top: 20px;
         }
-
-        .label {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            opacity: 0.8;
-            margin-bottom: 8px;
-        }
-
-        .secret-input-group {
+        .param-row {
             display: flex;
-            gap: 8px;
+            align-items: center;
+            margin-bottom: 15px;
+            gap: 10px;
             flex-wrap: wrap;
         }
-
-        .secret-input {
-            flex: 1;
+        .param-row label {
+            width: 100px;
+            font-weight: 500;
+        }
+        input, select {
             background: #030c1c;
             border: 1px solid #3c6eb4;
-            border-radius: 40px;
-            padding: 14px 18px;
+            border-radius: 30px;
+            padding: 10px 16px;
             color: #c3dcff;
             font-size: 1rem;
             outline: none;
-            backdrop-filter: blur(5px);
+        }
+        .secret-input-group {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+        }
+        .secret-input {
+            flex: 1;
             font-family: monospace;
         }
-
-        .secret-input:focus {
-            border-color: #8ab9ff;
-            box-shadow: 0 0 15px #2b6ed7;
-        }
-
         .set-btn {
             background: #0e2e5a;
             border: 1px solid #5e96e0;
             color: white;
             border-radius: 40px;
-            padding: 14px 22px;
+            padding: 10px 22px;
             font-weight: bold;
-            backdrop-filter: blur(5px);
             cursor: pointer;
-            box-shadow: 0 4px 10px #00000040;
-            transition: 0.15s;
+            white-space: nowrap;
         }
-
         .set-btn:hover {
             background: #1f509e;
-            border-color: #a3c3ff;
         }
-
+        .info-panel {
+            background: #0a142e80;
+            border-radius: 20px;
+            padding: 15px;
+            margin: 20px 0;
+            font-size: 0.9rem;
+            border: 1px solid #2e5a9c;
+        }
+        .error-message {
+            color: #ffb0a0;
+            background: #4a1e1e80;
+            padding: 8px 16px;
+            border-radius: 30px;
+            margin-top: 8px;
+            border-left: 4px solid #ff6b6b;
+        }
+        .success-message {
+            color: #a0ffb0;
+            background: #1e4a1e80;
+            padding: 8px 16px;
+            border-radius: 30px;
+            border-left: 4px solid #6bff6b;
+        }
         .warning {
             margin-top: 20px;
-            font-size: 0.8rem;
+            padding: 12px;
             background: #f7e05e20;
-            padding: 14px 16px;
             border-radius: 30px;
             border-left: 5px solid #ffd966;
-            color: #ffecb3;
-            backdrop-filter: blur(5px);
+            font-size: 0.8rem;
         }
-
-        .warning strong {
-            color: #ffe28c;
-        }
-
         .footer-note {
             margin-top: 15px;
             text-align: right;
             opacity: 0.6;
             font-size: 0.75rem;
         }
-
-        button {
-            user-select: none;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>🌌 AUTH•ORBIT</h1>
-        <div class="subhead">Квантовый TOTP • совместим с Google Auth</div>
+<div class="card">
+    <h1>🌠 CHATGPT OTP</h1>
+    <div class="subhead">SHA-256 • 6 цифр • 30 сек</div>
 
-        <div class="code-container">
-            <div class="timer-ring">
-                <div class="timer-circle" id="timerCircle">
-                    <div class="timer-text" id="timerText">30</div>
-                </div>
-            </div>
-            <div class="totp-display" id="totpDisplay">------</div>
-            <div id="errorDisplay" class="error-message" style="display: none;"></div>
-            <button class="copy-btn" id="copyBtn">📋 КОПИРОВАТЬ</button>
-        </div>
-
-        <div class="secret-section">
-            <div class="label">🔑 Секретный ключ (автоисправление 0→O, 1→I)</div>
-            <div class="secret-input-group">
-                <input type="text" id="secretInput" class="secret-input" placeholder="JBSWY3DPEHPK3PXP" spellcheck="false">
-                <button class="set-btn" id="setSecretBtn">Установить</button>
-            </div>
-            <div style="font-size:0.8rem; margin-top:8px; opacity:0.7;">
-                ⚡ Ссылка: <span id="urlHint">?secret=ВАШ_КЛЮЧ</span>
+    <div class="code-container">
+        <div class="timer-ring">
+            <div class="timer-circle" id="timerCircle">
+                <div class="timer-text" id="timerText">30</div>
             </div>
         </div>
-
-        <div class="warning">
-            <strong>⚠️ ВНИМАНИЕ: Вы приняли риск</strong><br>
-            Секрет виден в URL. Любой с ссылкой видит коды.
-        </div>
-        <div class="footer-note">🛸 cosmic energy • 0→O, 1→I</div>
+        <div class="totp-display" id="totpDisplay">------</div>
+        <button class="copy-btn" id="copyBtn">📋 КОПИРОВАТЬ</button>
     </div>
 
-    <script>
-        (function(){
-            "use strict";
+    <div class="info-panel">
+        <div style="display: flex; justify-content: space-between;">
+            <span>🕒 Unix время:</span>
+            <span id="unixTimeDisplay">—</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; margin-top: 5px;">
+            <span>🔑 Нормализованный ключ:</span>
+            <span id="normalizedKeyDisplay" style="font-family: monospace;">—</span>
+        </div>
+        <div style="margin-top: 10px; font-size:0.85rem;" id="syncStatus"></div>
+    </div>
 
-            // ---------- ЗВЁЗДНОЕ НЕБО ----------
-            function createStars() {
-                const starCount = 120;
-                for (let i = 0; i < starCount; i++) {
-                    const star = document.createElement('div');
-                    star.className = 'star';
-                    const size = Math.random() * 4 + 1;
-                    star.style.width = size + 'px';
-                    star.style.height = size + 'px';
-                    star.style.left = Math.random() * 100 + '%';
-                    star.style.top = Math.random() * 100 + '%';
-                    star.style.animation = `twinkle ${2 + Math.random() * 5}s infinite`;
-                    star.style.opacity = Math.random() * 0.7 + 0.2;
-                    document.body.appendChild(star);
-                }
+    <div class="settings">
+        <div class="param-row">
+            <label>🔐 Секрет:</label>
+            <div class="secret-input-group">
+                <input type="text" id="secretInput" class="secret-input" placeholder="Base32 ключ" spellcheck="false">
+                <button class="set-btn" id="setSecretBtn">Применить</button>
+            </div>
+        </div>
+        <div class="param-row">
+            <label>⚙️ Алгоритм:</label>
+            <select id="algorithmSelect">
+                <option value="SHA-1">SHA-1 (Google)</option>
+                <option value="SHA-256" selected>SHA-256 (ChatGPT/OpenAI)</option>
+                <option value="SHA-512">SHA-512</option>
+            </select>
+        </div>
+        <button class="set-btn" id="checkSyncBtn" style="width:100%;">🔄 Проверить синхронизацию времени</button>
+    </div>
+
+    <div id="messageArea"></div>
+
+    <div class="warning">
+        <strong>⚠️ Вы приняли риск:</strong> секрет виден в URL. Только для тестовых / личных аккаунтов.
+    </div>
+    <div class="footer-note">🛸 Встроенный TOTP • ChatGPT Edition</div>
+</div>
+
+<script>
+(function(){
+    "use strict";
+
+    // ---------- Base32 декодер (RFC 4648) ----------
+    const base32Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    function base32Decode(str) {
+        str = str.toUpperCase().replace(/[^A-Z2-7]/g, '');
+        let bits = '';
+        for (let i = 0; i < str.length; i++) {
+            const val = base32Chars.indexOf(str[i]);
+            if (val === -1) continue;
+            bits += val.toString(2).padStart(5, '0');
+        }
+        const bytes = [];
+        for (let i = 0; i + 8 <= bits.length; i += 8) {
+            bytes.push(parseInt(bits.substr(i, 8), 2));
+        }
+        return new Uint8Array(bytes);
+    }
+
+    // ---------- HOTP / TOTP реализация ----------
+    async function generateTOTP(secretBase32, algorithm = 'SHA-256', period = 30, digits = 6) {
+        const key = base32Decode(secretBase32);
+        const time = Math.floor(Date.now() / 1000);
+        const counter = Math.floor(time / period);
+        
+        // counter в 8 байт big-endian
+        const counterBytes = new Uint8Array(8);
+        for (let i = 7; i >= 0; i--) {
+            counterBytes[i] = counter & 0xFF;
+            counter = Math.floor(counter / 256);
+        }
+
+        // HMAC с выбранным алгоритмом
+        let hashAlgo = 'SHA-256';
+        if (algorithm === 'SHA-1') hashAlgo = 'SHA-1';
+        else if (algorithm === 'SHA-512') hashAlgo = 'SHA-512';
+        
+        const cryptoKey = await crypto.subtle.importKey(
+            'raw',
+            key,
+            { name: 'HMAC', hash: hashAlgo },
+            false,
+            ['sign']
+        );
+        const signature = await crypto.subtle.sign('HMAC', cryptoKey, counterBytes);
+        const hmac = new Uint8Array(signature);
+
+        // Динамическое усечение (Dynamic Truncation)
+        const offset = hmac[hmac.length - 1] & 0x0F;
+        const binary = 
+            ((hmac[offset] & 0x7F) << 24) |
+            ((hmac[offset + 1] & 0xFF) << 16) |
+            ((hmac[offset + 2] & 0xFF) << 8) |
+            (hmac[offset + 3] & 0xFF);
+        
+        const otp = binary % (10 ** digits);
+        return otp.toString().padStart(digits, '0');
+    }
+
+    // ---------- DOM элементы ----------
+    const totpDisplay = document.getElementById('totpDisplay');
+    const timerText = document.getElementById('timerText');
+    const timerCircle = document.getElementById('timerCircle');
+    const copyBtn = document.getElementById('copyBtn');
+    const secretInput = document.getElementById('secretInput');
+    const setSecretBtn = document.getElementById('setSecretBtn');
+    const algorithmSelect = document.getElementById('algorithmSelect');
+    const checkSyncBtn = document.getElementById('checkSyncBtn');
+    const unixTimeDisplay = document.getElementById('unixTimeDisplay');
+    const normalizedKeyDisplay = document.getElementById('normalizedKeyDisplay');
+    const syncStatus = document.getElementById('syncStatus');
+    const messageArea = document.getElementById('messageArea');
+
+    let currentSecretRaw = '';
+    let currentNormalized = '';
+    let intervalId = null;
+    let currentCode = '';
+
+    // Нормализация (0→O, 1→I, убираем пробелы)
+    function normalizeSecret(raw) {
+        let cleaned = raw.toUpperCase().replace(/[\s\-_]+/g, '');
+        cleaned = cleaned.replace(/0/g, 'O').replace(/1/g, 'I');
+        return cleaned;
+    }
+
+    function validateBase32(str) {
+        return /^[A-Z2-7]+$/.test(str);
+    }
+
+    // Обновление UI и генерация кода
+    async function updateUI() {
+        const now = Math.floor(Date.now() / 1000);
+        const period = 30;
+        const remaining = period - (now % period);
+        const progress = (remaining / period) * 360;
+
+        timerText.textContent = remaining;
+        timerCircle.style.background = `conic-gradient(#6ea8fe ${progress}deg, #0a1a2f ${progress}deg)`;
+        unixTimeDisplay.textContent = now;
+
+        if (currentNormalized && validateBase32(currentNormalized)) {
+            try {
+                const algo = algorithmSelect.value;
+                const code = await generateTOTP(currentNormalized, algo, 30, 6);
+                currentCode = code;
+                totpDisplay.textContent = code;
+                normalizedKeyDisplay.textContent = currentNormalized;
+                hideMessage();
+            } catch (e) {
+                totpDisplay.textContent = 'ERROR';
+                currentCode = '';
+                showMessage('Ошибка генерации: ' + e.message, 'error');
             }
-            createStars();
+        } else {
+            totpDisplay.textContent = '------';
+            currentCode = '';
+            normalizedKeyDisplay.textContent = currentNormalized || '—';
+            if (currentSecretRaw) showMessage('Некорректный Base32 ключ', 'error');
+        }
+    }
 
-            // ---------- DOM элементы ----------
-            const totpDisplay = document.getElementById('totpDisplay');
-            const timerText = document.getElementById('timerText');
-            const timerCircle = document.getElementById('timerCircle');
-            const copyBtn = document.getElementById('copyBtn');
-            const secretInput = document.getElementById('secretInput');
-            const setSecretBtn = document.getElementById('setSecretBtn');
-            const urlHintSpan = document.getElementById('urlHint');
-            const errorDisplay = document.getElementById('errorDisplay');
+    function startUpdater() {
+        if (intervalId) clearInterval(intervalId);
+        updateUI();
+        intervalId = setInterval(updateUI, 1000);
+    }
 
-            // ---------- Глобальные переменные ----------
-            let currentSecret = '';          // нормализованный Base32
-            let intervalId = null;
-            let currentCode = '';
-            let lastError = '';
+    function setSecret(raw) {
+        currentSecretRaw = raw.trim();
+        currentNormalized = normalizeSecret(currentSecretRaw);
+        secretInput.value = currentSecretRaw;
+        
+        // Обновить URL
+        const url = new URL(window.location);
+        if (currentSecretRaw) url.searchParams.set('secret', currentSecretRaw);
+        else url.searchParams.delete('secret');
+        window.history.replaceState({}, '', url);
 
-            // ---------- Нормализация секрета (исправление 0/1, проверка) ----------
-            function normalizeSecret(rawSecret) {
-                // Удаляем пробелы, дефисы, переводим в верхний регистр
-                let cleaned = rawSecret.toUpperCase().replace(/[\s\-_]+/g, '');
-                
-                // Замена нестандартных символов, часто путаемых
-                // 0 (ноль) -> O (буква)
-                // 1 (единица) -> I (буква)
-                // 8 -> B? иногда, но редко. Пока оставим.
-                let normalized = cleaned.replace(/0/g, 'O').replace(/1/g, 'I');
-                
-                // Проверяем, что все символы принадлежат алфавиту Base32 (A-Z2-7)
-                const base32Regex = /^[A-Z2-7]+$/;
-                if (!base32Regex.test(normalized)) {
-                    // Находим недопустимые символы для сообщения
-                    const invalidChars = [...new Set(normalized.split('').filter(c => !/[A-Z2-7]/.test(c)))].join('');
-                    throw new Error(`Недопустимые символы: ${invalidChars}. Исправлены 0→O, 1→I.`);
-                }
-                
-                // Дополнительно: длина должна быть кратна 8 (обычно 16, 32 и т.д.), но otplib справится
-                return normalized;
-            }
+        if (!validateBase32(currentNormalized)) {
+            showMessage('Ключ содержит недопустимые символы после замены 0→O, 1→I', 'error');
+        } else {
+            showMessage('Ключ валиден. Генерация...', 'success');
+        }
+        startUpdater();
+    }
 
-            // ---------- Генерация TOTP с обработкой ошибок ----------
-            function generateTOTP(secret) {
-                try {
-                    if (!secret || secret.trim() === '') {
-                        return { code: '------', error: null };
-                    }
-                    const normalized = normalizeSecret(secret);
-                    const token = otplib.authenticator.generate(normalized);
-                    return { code: token, error: null };
-                } catch (e) {
-                    console.warn('Ошибка генерации TOTP:', e);
-                    return { code: 'ERROR', error: e.message };
-                }
-            }
+    // Проверка времени
+    async function checkTimeSync() {
+        try {
+            const res = await fetch('https://worldtimeapi.org/api/timezone/Etc/UTC');
+            const data = await res.json();
+            const serverUnix = Math.floor(new Date(data.utc_datetime).getTime() / 1000);
+            const localUnix = Math.floor(Date.now() / 1000);
+            const diff = localUnix - serverUnix;
+            let msg = `Сервер UTC: ${serverUnix}. Локальное: ${localUnix}. Разница: ${diff} сек. `;
+            if (Math.abs(diff) > 30) msg += '⚠️ Сильное расхождение! Синхронизируйте часы.';
+            else if (Math.abs(diff) > 5) msg += '⚠️ Небольшое расхождение.';
+            else msg += '✅ Время синхронизировано.';
+            syncStatus.textContent = msg;
+        } catch(e) {
+            syncStatus.textContent = '❌ Ошибка проверки времени.';
+        }
+    }
 
-            // ---------- Обновление UI ----------
-            function updateDisplay() {
-                if (!currentSecret) {
-                    totpDisplay.textContent = '------';
-                    timerText.textContent = '30';
-                    timerCircle.style.background = `conic-gradient(#6ea8fe 0deg, #0a1a2f 0deg)`;
-                    currentCode = '';
-                    hideError();
-                    return;
-                }
+    function showMessage(text, type) {
+        messageArea.innerHTML = `<div class="${type==='error'?'error-message':'success-message'}">${text}</div>`;
+    }
+    function hideMessage() { messageArea.innerHTML = ''; }
 
-                const now = Math.floor(Date.now() / 1000);
-                const period = 30;
-                const remaining = period - (now % period);
-                const progressDeg = (remaining / period) * 360;
+    // Инициализация из URL
+    function initFromUrl() {
+        const params = new URLSearchParams(window.location.search);
+        const sec = params.get('secret');
+        if (sec) {
+            secretInput.value = sec;
+            setSecret(sec);
+        } else {
+            currentSecretRaw = '';
+            currentNormalized = '';
+            startUpdater();
+        }
+        const algo = params.get('algo');
+        if (algo) algorithmSelect.value = algo;
+    }
 
-                timerText.textContent = remaining;
-                timerCircle.style.background = `conic-gradient(#6ea8fe ${progressDeg}deg, #0a1a2f ${progressDeg}deg)`;
+    // Обработчики
+    setSecretBtn.addEventListener('click', ()=>{
+        setSecret(secretInput.value);
+    });
+    secretInput.addEventListener('keypress', (e)=>{
+        if(e.key==='Enter') setSecret(secretInput.value);
+    });
+    algorithmSelect.addEventListener('change', ()=>{
+        if (currentNormalized) startUpdater();
+        // обновить URL с algo параметром
+        const url = new URL(window.location);
+        url.searchParams.set('algo', algorithmSelect.value);
+        window.history.replaceState({}, '', url);
+    });
+    checkSyncBtn.addEventListener('click', checkTimeSync);
+    copyBtn.addEventListener('click', ()=>{
+        if (!currentCode || currentCode==='ERROR' || currentCode==='------') {
+            alert('Нет кода для копирования');
+            return;
+        }
+        navigator.clipboard.writeText(currentCode).then(()=>{
+            copyBtn.textContent='✅ СКОПИРОВАНО!';
+            setTimeout(()=>copyBtn.textContent='📋 КОПИРОВАТЬ',1500);
+        }).catch(()=>alert('Ошибка копирования'));
+    });
 
-                const result = generateTOTP(currentSecret);
-                currentCode = result.code;
-                totpDisplay.textContent = result.code;
+    window.addEventListener('beforeunload', ()=> clearInterval(intervalId));
 
-                if (result.error) {
-                    showError(result.error);
-                } else {
-                    hideError();
-                }
-            }
+    // Старт
+    initFromUrl();
+    checkTimeSync();
 
-            function showError(msg) {
-                errorDisplay.style.display = 'block';
-                errorDisplay.textContent = '⚠️ ' + msg;
-            }
-
-            function hideError() {
-                errorDisplay.style.display = 'none';
-            }
-
-            function startUpdater() {
-                if (intervalId) clearInterval(intervalId);
-                updateDisplay();
-                intervalId = setInterval(updateDisplay, 1000);
-            }
-
-            // ---------- Установка секрета ----------
-            function setSecret(rawSecret) {
-                try {
-                    const trimmed = rawSecret.trim();
-                    if (!trimmed) {
-                        currentSecret = '';
-                        secretInput.value = '';
-                        hideError();
-                    } else {
-                        // Пробуем нормализовать, чтобы показать возможные исправления
-                        const normalized = normalizeSecret(trimmed);
-                        currentSecret = trimmed; // сохраняем оригинал для URL, но при генерации нормализуем
-                        secretInput.value = trimmed;
-                        // Показываем в поле, что было введено (не меняем автоматически, но предупредим)
-                        if (trimmed !== normalized) {
-                            showError(`Секрет исправлен: ${normalized}. 0→O, 1→I.`);
-                        } else {
-                            hideError();
-                        }
-                    }
-                    
-                    // Обновление URL
-                    const url = new URL(window.location);
-                    if (currentSecret) {
-                        url.searchParams.set('secret', currentSecret);
-                    } else {
-                        url.searchParams.delete('secret');
-                    }
-                    window.history.replaceState({}, '', url);
-                    updateUrlHint();
-                    
-                    startUpdater();
-                } catch (e) {
-                    showError(e.message);
-                    // Всё равно пытаемся использовать как есть? Но библиотека не примет.
-                    // Сохраним как есть, но при генерации будет ошибка.
-                    currentSecret = rawSecret.trim();
-                    secretInput.value = currentSecret;
-                    const url = new URL(window.location);
-                    url.searchParams.set('secret', currentSecret);
-                    window.history.replaceState({}, '', url);
-                    updateUrlHint();
-                    startUpdater();
-                }
-            }
-
-            function updateUrlHint() {
-                if (currentSecret) {
-                    urlHintSpan.innerHTML = `?secret=${encodeURIComponent(currentSecret)}`;
-                } else {
-                    urlHintSpan.innerHTML = `?secret=ВАШ_КЛЮЧ`;
-                }
-            }
-
-            function getSecretFromUrl() {
-                const params = new URLSearchParams(window.location.search);
-                return params.get('secret') || '';
-            }
-
-            function initialize() {
-                const urlSecret = getSecretFromUrl();
-                if (urlSecret) {
-                    currentSecret = urlSecret;
-                    secretInput.value = urlSecret;
-                    // Попытка нормализации для сообщения
-                    try {
-                        const norm = normalizeSecret(urlSecret);
-                        if (urlSecret !== norm) {
-                            showError(`Секрет исправлен: ${norm}. 0→O, 1→I.`);
-                        }
-                    } catch (e) {
-                        showError(e.message);
-                    }
-                } else {
-                    currentSecret = '';
-                    secretInput.value = '';
-                }
-                updateUrlHint();
-                startUpdater();
-            }
-
-            // ---------- Обработчики ----------
-            setSecretBtn.addEventListener('click', function() {
-                setSecret(secretInput.value);
-            });
-
-            secretInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    setSecret(secretInput.value);
-                }
-            });
-
-            copyBtn.addEventListener('click', function() {
-                if (!currentCode || currentCode === '------' || currentCode === 'ERROR') {
-                    alert('Нет кода для копирования');
-                    return;
-                }
-                navigator.clipboard.writeText(currentCode).then(() => {
-                    copyBtn.textContent = '✅ СКОПИРОВАНО!';
-                    setTimeout(() => {
-                        copyBtn.textContent = '📋 КОПИРОВАТЬ';
-                    }, 1500);
-                }).catch(err => {
-                    alert('Не удалось скопировать: ' + err);
-                });
-            });
-
-            window.addEventListener('beforeunload', function() {
-                if (intervalId) clearInterval(intervalId);
-            });
-
-            initialize();
-        })();
-    </script>
+    // Для отладки: если URL уже содержит ваш ключ, он автоматически применится.
+    // Пример: ?secret=IXASK3D4TJ2O5JVHZK6K6S6J6IG4XJXY&algo=SHA-256
+})();
+</script>
 </body>
 </html>
